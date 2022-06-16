@@ -16,8 +16,10 @@
                     <button>Strona glowna</button></a>
                 <a href="info_page.php">
                     <button>O nas</button></a>
-                <a href="">
-                    <button>Jestem Adminem</button></a>
+                <a href="koszyk.php">
+                    <button>Koszyk</button></a>
+                <a href="logowanie.php">
+                    <button>Zaloguj</button></a>
             </ul>
         </nav>
     </div>
