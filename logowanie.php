@@ -1,6 +1,14 @@
 <?php
-include 'config.php';
+include ("config.php");
 session_start();
+if(empty($_SESSION['user_id'])){
+    $_SESSION['user_id'] = 0;
+}
+$userId =  $_SESSION['user_id'];
+$zapytanie2 = "SELECT* FROM user WHERE id='$userId'";
+
+$selectNazwa = mysqli_query($connection, $zapytanie2);
+$nazwa = mysqli_fetch_assoc($selectNazwa);
 
 if(isset($_POST['submit'])){
 
@@ -11,12 +19,11 @@ if(isset($_POST['submit'])){
 
     if(mysqli_num_rows($select) > 0){
         $row = mysqli_fetch_assoc($select);
-        $_SESSION['id'] = $row['id'];
+        $_SESSION['user_id'] = $row['id'];
         header('location:main_site.php');
     }else{
-        $message[] = 'Niepoprawny email lub haslo';
+        $message[] = 'zly email lub haslo!';
     }
-
 }
 ?>
 
@@ -28,8 +35,22 @@ if(isset($_POST['submit'])){
     <title>
         👕 KOSZULKI PREMIUM 👕
     </title>
-    <a href='main_site.php'>
+    <?php
+    if (!empty($_SESSION['user_id'])){
+        echo
+        '<div class="loginInfo">
+        <ul>';
+        echo 'Zalogowano jako:';
+        echo $nazwa['nazwa'];
+
+        echo '<a href="logout.php"><br>wyloguj</a> 
+        </ul>
+    </div>';
+    }
+    ?>
+    <a href='main_site.php'><br>
         <img class="logo" src="logo.png" ></a>
+
     <div class="navigationbar">
         <nav>
             <ul>
@@ -44,25 +65,19 @@ if(isset($_POST['submit'])){
             </ul>
         </nav>
     </div>
-
-
-
-
-
-
 </head>
 <body class="body">
 
-<?php
-if(isset($message)){
-    foreach($message as $message){
-        echo '<div class="message" onclick="this.remove();">'.$message.'</div>';
-    }
-}
-?>
+
 
 <div class="logowanie">
-
+    <?php
+    if(isset($message)){
+        foreach($message as $message){
+            echo '<div class="message" onclick="this.remove();">'.$message.'</div>';
+        }
+    }
+    ?>
     <form action="" method="post">
         <h3>Logowanie</h3>
         <input type="email" name="email" required placeholder="wpisz email" class="box">

@@ -1,4 +1,6 @@
 <?php
+session_start();
+include ("config.php");
 $zdjecie = $_POST['zdjecie'];
 $tytul = $_POST['tytul'];
 $opis = $_POST['opis'];
@@ -9,7 +11,7 @@ $ilosc = $_POST['ilosc'];
 $id = $_POST['id'];
 
 
-session_start();
+
 $connection = mysqli_connect("127.0.0.1","root","","sklep_internetowy");
 if(isset($_POST['dodaj'])){
     if(isset($_SESSION['koszyk']))
@@ -47,9 +49,32 @@ if(isset($_POST['dodaj'])){
         );
         $_SESSION['koszyk'][0]=$item_array;
     }
+    header('Location: koszyk.php');
+}
+if(empty($_SESSION['user_id'])){
+    $_SESSION['user_id'] = 0;
+}
+$userId =  $_SESSION['user_id'];
+$zapytanie2 = "SELECT* FROM user WHERE id='$userId'";
+
+$selectNazwa = mysqli_query($connection, $zapytanie2);
+$nazwa = mysqli_fetch_assoc($selectNazwa);
+if(isset($_GET["action"]))
+{
+    if($_GET["action"] == "usun")
+    {
+        foreach($_SESSION["koszyk"] as $keys => $values)
+        {
+            if($values["item_id"] == $_GET["id"])
+            {
+                unset($_SESSION["koszyk"][$keys]);
+                echo '<script>alert("Usunieto przedmiot")</script>';
+                echo '<script>window.location="koszyk.php"</script>';
+            }
+        }
+    }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,8 +83,21 @@ if(isset($_POST['dodaj'])){
     <title>
         👕 KOSZULKI PREMIUM 👕
     </title>
+    <?php
+    if (!empty($_SESSION['user_id'])){
+        echo
+        '<div class="loginInfo">
+        <ul>';
+        echo 'Zalogowano jako:';
+        echo $nazwa['nazwa'];
 
-    <a href='main_site.php'>
+        echo '<a href="logout.php"><br>wyloguj</a> 
+        </ul>
+    </div>';
+    }
+    ?>
+
+    <a href='main_site.php'><br>
         <img class="logo" src="logo.png" ></a>
     <div class="navigationbar">
         <nav>

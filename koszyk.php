@@ -1,9 +1,19 @@
 <?php
 session_start();
 
+$polaczenie = mysqli_connect("127.0.0.1", "root","","sklep_internetowy");
+
+if(empty($_SESSION['user_id'])){
+    $_SESSION['user_id'] = 0;
+}
+$userId =  $_SESSION['user_id'];
+$zapytanie2 = "SELECT* FROM user WHERE id='$userId'";
+
+$selectNazwa = mysqli_query($polaczenie, $zapytanie2);
+$nazwa = mysqli_fetch_assoc($selectNazwa);
 if(isset($_GET["action"]))
 {
-    if($_GET["action"] == "delete")
+    if($_GET["action"] == "usun")
     {
         foreach($_SESSION["koszyk"] as $keys => $values)
         {
@@ -25,8 +35,21 @@ if(isset($_GET["action"]))
     <title>
         👕 KOSZULKI PREMIUM 👕
     </title>
+    <?php
+    if (!empty($_SESSION['user_id'])){
+        echo
+        '<div class="loginInfo">
+        <ul>';
+        echo 'Zalogowano jako:';
+        echo $nazwa['nazwa'];
 
-    <a href='main_site.php'>
+        echo '<a href="logout.php"><br>wyloguj</a> 
+        </ul>
+    </div>';
+    }
+    ?>
+
+    <a href='main_site.php'><br>
         <img class="logo" src="logo.png" ></a>
     <div class="navigationbar">
         <nav>
@@ -62,18 +85,18 @@ if(isset($_GET["action"]))
             ?>
             <tr>
                 <td><?php echo $values['item_tytul']?></td>
-                <td><?php echo $values['item_ilosc']?></td>
-                <td><?php echo "$ " . $values['item_cenaBez']?></td>
-                <td><?php echo number_format($values['item_ilosc'] * $values['item_cenaBez'], 2);?></td>
-                <td><a href="koszyk.php?Usun=usun&id=<?php echo $values['item_id']; ?>"><span class="">usun</span></a></td>
+                <td><?php echo $values['item_ileProduktow']?></td>
+                <td><?php echo "zl " . $values['item_cenaBez']?></td>
+                <td><?php echo "zl " . number_format($values['item_ileProduktow'] * $values['item_cenaBez'], 2);?></td>
+                <td><a href="koszyk.php?action=usun&id=<?php echo $values['item_id']; ?>"><span class="">usun</span></a></td>
             </tr>
             <?php
-                $total = $total + ($values['item_ilosc'] * $values['item_cenaBez']);
+                $total = $total + ($values['item_ileProduktow'] * $values['item_cenaBez']);
                 }
             ?>
                 <tr>
                     <td colspan="3" align="right">Razem: </td>
-                    <td align="right">$ <?php echo number_format($total,2);?></td>
+                    <td align="right">zl <?php echo number_format($total,2);?></td>
                     <td></td>
                 </tr>
             <?php

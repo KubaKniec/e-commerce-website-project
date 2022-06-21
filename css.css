@@ -82,3 +82,14 @@ body{
     padding: 10px;
     background-color: lightgrey;
 }
+.message{
+    text-align: center;
+    border: black;
+}
+
+.loginInfo{
+    padding: 2px;
+    border: 2px solid black;
+    background-color: lightgrey;
+    margin-right: 1455px;
+}

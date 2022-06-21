@@ -1,3 +1,18 @@
+<?php
+session_start();
+$zapytanie = "SELECT* FROM produkty";
+$polaczenie = mysqli_connect("127.0.0.1", "root","","sklep_internetowy");
+
+if(empty($_SESSION['user_id'])){
+    $_SESSION['user_id'] = 0;
+}
+$userId =  $_SESSION['user_id'];
+$zapytanie2 = "SELECT* FROM user WHERE id='$userId'";
+
+$select = mysqli_query($polaczenie,$zapytanie);
+$selectNazwa = mysqli_query($polaczenie, $zapytanie2);
+$nazwa = mysqli_fetch_assoc($selectNazwa);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,8 +21,21 @@
     <title>
         👕 KOSZULKI PREMIUM 👕
     </title>
+    <?php
+    if (!empty($_SESSION['user_id'])){
+        echo
+        '<div class="loginInfo">
+        <ul>';
+        echo 'Zalogowano jako:';
+        echo $nazwa['nazwa'];
 
-    <a href='main_site.php'>
+        echo '<a href="logout.php"><br>wyloguj</a> 
+        </ul>
+    </div>';
+    }
+    ?>
+
+    <a href='main_site.php'><br>
         <img class="logo" src="logo.png" ></a>
     <div class="navigationbar">
         <nav>

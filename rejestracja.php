@@ -1,13 +1,21 @@
 <?php
 session_start();
 
-include 'config.php';
+include ("config.php");
+if(empty($_SESSION['user_id'])){
+    $_SESSION['user_id'] = 0;
+}
+$userId =  $_SESSION['user_id'];
+$zapytanie2 = "SELECT* FROM user WHERE id='$userId'";
+
+$selectNazwa = mysqli_query($connection, $zapytanie2);
+$nazwa = mysqli_fetch_assoc($selectNazwa);
 
 if (isset($_POST['submit'])) {
 
     $name = mysqli_real_escape_string($connection, $_POST['name']);
     $email = mysqli_real_escape_string($connection, $_POST['email']);
-    $pass = mysqli_real_escape_string($connection, md5($_POST['pass']));
+    $pass = mysqli_real_escape_string($connection, md5($_POST['password']));
     $confirmPass = mysqli_real_escape_string($connection, md5($_POST['confirmPass']));
 
     $select = mysqli_query($connection, "SELECT * FROM user WHERE email = '$email' AND haslo = '$pass'") or die('query failed');
@@ -30,7 +38,20 @@ if (isset($_POST['submit'])) {
     <title>
         👕 KOSZULKI PREMIUM 👕
     </title>
-    <a href='main_site.php'>
+    <?php
+    if (!empty($_SESSION['user_id'])){
+        echo
+        '<div class="loginInfo">
+        <ul>';
+        echo 'Zalogowano jako:';
+        echo $nazwa['nazwa'];
+
+        echo '<a href="logout.php"><br>wyloguj</a> 
+        </ul>
+    </div>';
+    }
+    ?>
+    <a href='main_site.php'><br>
         <img class="logo" src="logo.png" ></a>
     <div class="navigationbar">
         <nav>
@@ -73,7 +94,7 @@ if(isset($message)){
         <input type="password" name="password" required placeholder="wpisz haslo" class="box">
         <input type="password" name="confirmPass" required placeholder="potwierdz haslo" class="box">
         <input type="submit" name="submit" class="btn" value="zarejestruj">
-        <p>Masz juz konto ? <a href="logowanie.php">Zaloguj</a></p>
+        <p>Masz juz konto ?  <a href="logowanie.php">Zaloguj</a></p>
     </form>
 
 </div>
