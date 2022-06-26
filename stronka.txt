@@ -1,0 +1,31 @@
+Link do stronki:
+http://koszulkipremium.pl/main_site.php
+
+
+baza danych: 
+nazwa 36196754_koszulkipremium
+haslo koszulkipremium1234
+
+polaczenie z baza danych:
+127.0.0.1
+36196754_koszulkipremium
+koszulkipremium1234
+36196754_koszulkipremium
+
+
+ftp:
+admin@koszulkipremium.pl
+koszulkipremium1234
+ftp - serwer2287492.home.pl
+
+
+home.pl
+kuba.kniec@onet.pl
+haslo znam :)
+
+
+
+konto admina na stronce
+admin@admin.pl
+admin
+
