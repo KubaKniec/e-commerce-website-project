@@ -15,11 +15,16 @@ $email = $_SESSION['email'];
 $query = "SELECT * FROM zamowienia WHERE email='$email'";
 $select = mysqli_query($connection,$query);
 
+$queryOpinie = "SELECT * FROM opinia join user on user.id=id_uzytkownika WHERE id_uzytkownika='$userId'";
+$queryOpinie = mysqli_query($connection,$queryOpinie);
+
+
+
 
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 
     <link rel="stylesheet" href="css.css">
@@ -71,14 +76,14 @@ $select = mysqli_query($connection,$query);
     <a href="edytujDane.php">
         <button>Edytuj profil</button>
     </a>
+    <br>_____________________________________<br><br>
     <h3>Moje zamowienia</h3>_____________________________________<br><br>
     <?php
     while($zamowienie = mysqli_fetch_assoc($select)){
         echo "
-        
+        <h5>Szczegoly dostawy</h5>
         <li>Cena: $zamowienie[cena]zl</li>
         <li>Data zamowienia: $zamowienie[data]</li>
-        <h5>Szczegoly dostawy</h5>
         <li>Miasto: $zamowienie[miasto]</li>
         <li>Adres: $zamowienie[adres]</li>
         <li>Miasto: $zamowienie[miasto]</li>
@@ -88,11 +93,34 @@ $select = mysqli_query($connection,$query);
         <li>Numer telefonu: $zamowienie[numer]</li>
         <li>Metoda platnosci: $zamowienie[metodaPlatnosci]</li>
         <li>Metoda dostawy: $zamowienie[metodaDostawy]</li>
-        <li>E-mail: $zamowienie[email]</li>_____________________________________";
+        <li>E-mail: $zamowienie[email]</li>_____________________________________<br><br><br>";
+    }
+    ?>
+</div>
+<br>
+<div class="produkt">
+    _____________________________________<br><br><h3>Moje opinie</h3>_____________________________________<br><br>
+    <?php
+    while($opinie = mysqli_fetch_assoc($queryOpinie)){
+        $tresc = $opinie['tresc'];
+        $ocena = $opinie['ocena'];
+        $tytul = "SELECT tytul FROM opinia join produkty on produkty.id=opinia.id_produktu where tresc='$tresc' and ocena='$ocena'";
+        $tytul = mysqli_query($connection,$tytul);
+        $tytul = mysqli_fetch_assoc($tytul);
+        echo "
+        <li>Produkt: $tytul[tytul]</li>
+        <li>Ocena: $opinie[ocena]/5</li>
+        <li>Data zamowienia: $opinie[tresc]</li>
+        _____________________________________";
+
     }
     ?>
 
+
 </div>
+
+
+
 
 
 

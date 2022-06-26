@@ -22,8 +22,8 @@ if (isset($_POST['dodaj'])) {
     $cenaZ = $_POST['cenaZ'];
     $ilosc = $_POST['ilosc'];
     $id = $_POST['id'];
-
 }
+
 //dodawanie przedmiotu (ADMIN)
 if(isset($_POST['dodajPrzedmiot'])){
     $tytul = $_POST['tytul'];
@@ -107,7 +107,7 @@ if(isset($_POST['dodaj'])){
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
     <link rel="stylesheet" href="css.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">

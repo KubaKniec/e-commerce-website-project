@@ -29,8 +29,10 @@ if(isset($_GET["action"]))
                 $connection->query($query);
 
                 unset($_SESSION["koszyk"][$keys]);
-                echo '<script>alert("Usunieto przedmiot")</script>';
-                echo '<script>window.location="koszyk.php"</script>';
+                echo'<div class="alert alert-info" style="text-align: center">
+                        <strong>Usunieto przedmiot</strong> 
+                    </div>';
+
             }
         }
     }
@@ -167,14 +169,20 @@ if(isset($_GET["action"]))
 
         }
         else{
-            echo '<script> alert("Email, numer telefonu lub kod pocztowy jest niepoprawny. Wprowadz dane ponownie")</script>';
+            echo'<div class="alert alert-warning" style="text-align: center">
+                    <strong>Email, numer telefonu lub kod pocztowy maja niepoprawny format. Wprowadz dane ponownie</strong> 
+            </div>';
+
         }
     }
     if (empty($_SESSION['koszyk'])){
         echo"Koszyk jest pusty";
     }
     if ($_SESSION['user_id'] == 0){
-        echo '<script> alert("Aby dokonac zakupu musisz byc zalogowany")</script>';
+        echo'<div class="alert alert-warning style="text-align: center">
+                    <strong>Aby dokonac zakupu musisz byc zalogowany</strong> 
+            </div>';
+
     }
 
 

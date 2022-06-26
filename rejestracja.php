@@ -13,37 +13,54 @@ $nazwa = mysqli_fetch_assoc($selectNazwa);
 
 
 if (isset($_POST['submit'])) {
-    if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){  //validacja email
-        $name = mysqli_real_escape_string($connection, $_POST['name']);
-        $email = mysqli_real_escape_string($connection, $_POST['email']);
-        $pass = mysqli_real_escape_string($connection, md5($_POST['password']));
-        $confirmPass = mysqli_real_escape_string($connection, md5($_POST['confirmPass']));
+    $uppercase = preg_match('@[A-Z]@', $_POST['password']);
+    $lowercase = preg_match('@[a-z]@', $_POST['password']);
+    $number    = preg_match('@[0-9]@', $_POST['password']);
+    $specialChars = preg_match('@[^\w]@', $_POST['password']);
 
-        if ($pass === $confirmPass){
-            $select = mysqli_query($connection, "SELECT * FROM user WHERE email = '$email' AND haslo = '$pass'") or die('query failed');
+    if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($_POST['password']) < 8) {
+    echo '<div class="alert alert-warning" style="text-align: center">
+                <strong>Haslo musi miec conajmniej 8 znakow, conajmniej 1 duza litere, 1 znak specjalny oraz 1 znak normalny</strong> 
+          </div>';
 
-            if (mysqli_num_rows($select) > 0) {
-                $message[] = 'user already exist!';
-            } else {
-                mysqli_query($connection, "INSERT INTO user(nazwa, email, haslo) VALUES('$name', '$email', '$pass')") or die('query failed');
-                $message[] = 'registered successfully!';
-                header('location:logowanie.php');
-            }
         }
-        else{
-           echo '<script> alert("Pola HASLO oraz POTWIERDZ HASLO musza byc takie same. Wprowadz dane ponownie")</script>';
-        }
-
-    }
     else{
-        echo '<script> alert("Email ma niepoprawny format. Wprowadz dane ponownie")</script>';
+        if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {  //validacja email
+            $name = mysqli_real_escape_string($connection, $_POST['name']);
+            $email = mysqli_real_escape_string($connection, $_POST['email']);
+            $pass = mysqli_real_escape_string($connection, md5($_POST['password']));
+            $confirmPass = mysqli_real_escape_string($connection, md5($_POST['confirmPass']));
+
+            if ($pass === $confirmPass) {
+                $select = mysqli_query($connection, "SELECT * FROM user WHERE email = '$email' AND haslo = '$pass'") or die('query failed');
+
+                if (mysqli_num_rows($select) > 0) {
+                    echo '<div class="alert alert-warning" style="text-align: center">
+                        <strong>Taki uzytkownik juz istnieje</strong> 
+                      </div>';
+                } else {
+                    mysqli_query($connection, "INSERT INTO user(nazwa, email, haslo) VALUES('$name', '$email', '$pass')") or die('query failed');
+                    header('location:logowanie.php');
+                }
+            } else {
+                echo '<div class="alert alert-warning" style="text-align: center">
+                        <strong>Pola HASLO oraz POTWIERDZ HASLO musza byc takie same. Wprowadz dane ponownie</strong> 
+                      </div>';
+            }
+
+        } else {
+            echo '<div class="alert alert-warning" style="text-align: center">
+                      <strong>Email ma niepoprawny format. Wprowadz dane ponownie</strong> 
+                  </div>';
+        }
     }
+
 
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 
     <link rel="stylesheet" href="css.css">
@@ -100,7 +117,7 @@ if(isset($message)){
 }
 ?>
 <div class="rejestracja">
-    <!--formularz rejestracji-->
+    <!--formularz rejestracji z walidacja email-->
     <form action="" method="post">
         <h3>Rejestracja</h3>
         <input type="text" name="name" required placeholder="wpisz nazwe" class="box">

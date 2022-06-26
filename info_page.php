@@ -14,7 +14,7 @@ $selectNazwa = mysqli_query($polaczenie, $zapytanie2);
 $nazwa = mysqli_fetch_assoc($selectNazwa);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 
     <link rel="stylesheet" href="css.css">

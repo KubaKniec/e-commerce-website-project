@@ -11,28 +11,37 @@ $selectNazwa = mysqli_query($connection, $zapytanie2);
 $nazwa = mysqli_fetch_assoc($selectNazwa);
 
 if(isset($_POST['submit'])){
+    if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
+        $email = mysqli_real_escape_string($connection, $_POST['email']);
+        $pass = mysqli_real_escape_string($connection, md5($_POST['password']));
 
-    $email = mysqli_real_escape_string($connection, $_POST['email']);
-    $pass = mysqli_real_escape_string($connection, md5($_POST['password']));
+        $select = mysqli_query($connection, "SELECT * FROM user WHERE email = '$email' AND haslo = '$pass'") or die('query failed');
 
-    $select = mysqli_query($connection, "SELECT * FROM user WHERE email = '$email' AND haslo = '$pass'") or die('query failed');
+        if(mysqli_num_rows($select) > 0){
+            $_SESSION['email'] = $_POST['email'];
+            $row = mysqli_fetch_assoc($select);
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['czyAdmin'] = $row['czyAdmin'];
 
-    if(mysqli_num_rows($select) > 0){
-        $_SESSION['email'] = $_POST['email'];
-        $row = mysqli_fetch_assoc($select);
-        $_SESSION['user_id'] = $row['id'];
-        $_SESSION['czyAdmin'] = $row['czyAdmin'];
-
-        header('location:main_site.php');
+            header('location:main_site.php');
+        }
+        else{
+            echo '<div class="alert alert-warning" style="text-align: center">
+                 <strong>zly email lub haslo!</strong> 
+              </div>';
+        }
     }
     else{
-        $message[] = 'zly email lub haslo!';
+        echo '<div class="alert alert-warning" style="text-align: center">
+                 <strong>Email ma niepoprawny format. Wpisz dane ponownie</strong> 
+              </div>';
     }
+
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 
     <link rel="stylesheet" href="css.css">
@@ -92,7 +101,7 @@ if(isset($_POST['submit'])){
     ?>
     <form action="" method="post">
         <h3>Logowanie</h3>
-        <input type="email" name="email" required placeholder="wpisz email" class="box">
+        <input type="text" name="email" required placeholder="wpisz email" class="box">
         <input type="password" name="password" required placeholder="wpisz haslo" class="box">
         <input type="submit" name="submit" class="btn" value="zaloguj">
         <p>Nie masz jeszcze konta ? <a href="rejestracja.php">zarejestruj sie</a></p>

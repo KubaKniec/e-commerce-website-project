@@ -14,17 +14,44 @@ $email = $_SESSION['email'];
 $query = "SELECT * FROM user WHERE email='$email'";
 $select = mysqli_query($connection,$query);
 
+
+
+
 //zmiana danych konta
 if (isset($_POST['zmien'])){
-    $newNazwa = mysqli_real_escape_string($connection, $_POST['nazwa']);
-    $newEmail = mysqli_real_escape_string($connection, $_POST['email']);
-    $newHaslo = mysqli_real_escape_string($connection, md5($_POST['haslo']));
-    $updateQuery = "UPDATE user SET nazwa='$newNazwa',email='$newEmail',haslo='$newHaslo' WHERE email='$email'";
-    mysqli_query($connection,$updateQuery);
-    $_SESSION['email'] = $newEmail;
-    $email = $_SESSION['email'];
-    echo "<script> alert('Zmieniono dane')</script>";
-    header("Location: mojeKonto.php");
+    $uppercase = preg_match('@[A-Z]@', $_POST['haslo']);
+    $lowercase = preg_match('@[a-z]@', $_POST['haslo']);
+    $number    = preg_match('@[0-9]@', $_POST['haslo']);
+    $specialChars = preg_match('@[^\w]@', $_POST['haslo']);
+
+    if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($_POST['haslo']) < 8) {
+        echo '<div class="alert alert-warning" style="text-align: center">
+                    <strong>Haslo musi miec conajmniej 8 znakow, conajmniej 1 duza litere, 1 znak specjalny oraz 1 znak normalny</strong> 
+            </div>';
+    }
+    elseif(filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
+        if ($_POST['haslo'] === $_POST['potwierdzHaslo']) {
+            $newNazwa = mysqli_real_escape_string($connection, $_POST['nazwa']);
+            $newEmail = mysqli_real_escape_string($connection, $_POST['email']);
+            $newHaslo = mysqli_real_escape_string($connection, md5($_POST['haslo']));
+            $updateQuery = "UPDATE user SET nazwa='$newNazwa',email='$newEmail',haslo='$newHaslo' WHERE email='$email'";
+            mysqli_query($connection, $updateQuery);
+            $_SESSION['email'] = $newEmail;
+            $email = $_SESSION['email'];
+            header("Location: mojeKonto.php");
+        }
+        else{
+            echo '<div class="alert alert-warning" style="text-align: center">
+                      <strong>Pola HASLO oraz POTWIERDZ HASLO musza byc takie same. Wprowadz dane ponownie</strong> 
+                  </div>';
+        }
+    }
+    else{
+        echo '<div class="alert alert-warning" style="text-align: center">
+                      <strong>Email ma niepoprawny format. Wprowadz dane ponownie</strong> 
+                  </div>';
+    }
+
 }
 
 //usuwanie konta
@@ -42,7 +69,7 @@ if (isset($_POST['usun'])){
 
 
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 
     <link rel="stylesheet" href="css.css">
@@ -95,8 +122,9 @@ if (isset($_POST['usun'])){
     <h3>Wprowadz nowe dane</h3>
     <form method="post">
         <input type="text" name="nazwa" required placeholder="wpisz nową nazwe" class="box">
-        <input type="email" name="email" required placeholder="wpisz nowy email" class="box">
+        <input type="text" name="email" required placeholder="wpisz nowy email" class="box">
         <input type="password" name="haslo" required placeholder="wpisz nowe haslo" class="box">
+        <input type="password" name="potwierdzHaslo" required placeholder="potwierdz haslo" class="box">
         <input class="btn btn-default btn-sm" type="submit" name="zmien" value="Zmien dane">
     </form>
 

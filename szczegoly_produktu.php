@@ -1,6 +1,12 @@
 <?php
 session_start();
 include ("config.php");
+include ("opinia.php");
+
+if(empty($_SESSION['user_id'])){
+    $_SESSION['user_id'] = 0;
+}
+
 $zdjecie = $_POST['zdjecie'];
 $tytul = $_POST['tytul'];
 $opis = $_POST['opis'];
@@ -9,6 +15,7 @@ $cenaBez = $_POST['cenaBez'];
 $cenaZ = $_POST['cenaZ'];
 $ilosc = $_POST['ilosc'];
 $id = $_POST['id'];
+$_SESSION['id_produktu'] = $id;
 
 
 
@@ -72,25 +79,10 @@ $zapytanie2 = "SELECT* FROM user WHERE id='$userId'";
 $selectNazwa = mysqli_query($connection, $zapytanie2);
 $nazwa = mysqli_fetch_assoc($selectNazwa);
 
-//usuwanie z koszyka
-if(isset($_GET["action"]))
-{
-    if($_GET["action"] == "usun")
-    {
-        foreach($_SESSION["koszyk"] as $keys => $values)
-        {
-            if($values["item_id"] == $_GET["id"])
-            {
-                unset($_SESSION["koszyk"][$keys]);
-                echo '<script>alert("Usunieto przedmiot")</script>';
-                echo '<script>window.location="koszyk.php"</script>';
-            }
-        }
-    }
-}
+
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
 
     <link rel="stylesheet" href="css.css">
@@ -162,9 +154,18 @@ echo"
         <input type='hidden' value='$opisDuzy' name='opisDuzy'>
         <input type='hidden' value='$id' name='id'>
         </form>
+       
+       
+        <form method='post' action='opinie.php'>
+        <input type='hidden' value='$zdjecie' name='zdjecie'>
+        <input type='submit' name='przejdzDoOpinii' class='btn btn-default btn-lg' value='Przejdz do opinii'>
+        </form>
+        
         </div>
         "
 ?>
+
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
