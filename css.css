@@ -7,6 +7,7 @@
 
 .zdjecieKoszulki{
     display: block;
+    border: 2px solid black;
     margin-left: auto;
     margin-right: auto;
 }
@@ -53,6 +54,22 @@
     background-color: bisque;
 }
 
+.addToCartMainSite{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 5%;
+
+}
+.formDost{
+    text-align: center;
+    margin: auto;
+    width: 65%;
+    border: 2px solid black;
+    background-color: lightgrey;
+}
+
 .navigationbar{
     text-align: center;
     margin-right: 35px;
@@ -93,3 +110,4 @@ body{
     background-color: lightgrey;
     margin-right: 1455px;
 }
+

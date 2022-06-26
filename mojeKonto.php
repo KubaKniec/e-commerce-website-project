@@ -1,18 +1,23 @@
 <?php
+include ("config.php");
 session_start();
-$zapytanie = "SELECT* FROM produkty";
-$polaczenie = mysqli_connect("127.0.0.1", "root","","sklep_internetowy");
-
 if(empty($_SESSION['user_id'])){
     $_SESSION['user_id'] = 0;
 }
-$userId =  $_SESSION['user_id'];
-$zapytanie2 = "SELECT* FROM user WHERE id='$userId'";
 
-$select = mysqli_query($polaczenie,$zapytanie);
-$selectNazwa = mysqli_query($polaczenie, $zapytanie2);
+$userId =  $_SESSION['user_id'];
+$zapytanie2 = "SELECT * FROM user WHERE id='$userId'";
+
+$selectNazwa = mysqli_query($connection, $zapytanie2);
 $nazwa = mysqli_fetch_assoc($selectNazwa);
+$email = $_SESSION['email'];
+
+$query = "SELECT * FROM zamowienia WHERE email='$email'";
+$select = mysqli_query($connection,$query);
+
+
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,9 +47,9 @@ $nazwa = mysqli_fetch_assoc($selectNazwa);
     </div>';
     }
     ?>
-
     <a href='main_site.php'><br>
         <img class="logo" src="logo.png" ></a>
+
     <div class="navigationbar">
         <nav>
             <ul>
@@ -59,22 +64,38 @@ $nazwa = mysqli_fetch_assoc($selectNazwa);
             </ul>
         </nav>
     </div>
-
-
 </head>
 <body class="body">
-<div class="infoPage">
-    <h3>O nas</h3>
-    <a class="infoPageNapisy">!!! Witaj w naszym sklepie !!! <br/></a>
-    <a class="infoPageNapisy">Znajdziesz tu tylko najwyzszej jakosci produkty. <br/></a>
-    <a class="infoPageNapisy">Termin dostawy to od 2 dni roboczych do roku. <br/></a>
-    <a class="infoPageNapisy">To zalezy od tego czy bedzie nam sie chcialo wysylac twoja paczke. <br/></a>
-    <a class="infoPageNapisy">Pozdrawiamy serdecznie, zespol Koszulki Premium <br/></a>
-    <a class="infoPageNapisy">Kontakt: <br/></a>
-    <a class="infoPageNapisy">📞 +48 100 555 100<br/></a>
-    <a class="infoPageNapisy">📧 najlepsze.koszulki@tshirt.com<br/></a>
-    <a class="infoPageNapisy"><br/><br/><br/></a>
+
+<div class="produkt">
+    <a href="edytujDane.php">
+        <button>Edytuj profil</button>
+    </a>
+    <h3>Moje zamowienia</h3>_____________________________________<br><br>
+    <?php
+    while($zamowienie = mysqli_fetch_assoc($select)){
+        echo "
+        
+        <li>Cena: $zamowienie[cena]zl</li>
+        <li>Data zamowienia: $zamowienie[data]</li>
+        <h5>Szczegoly dostawy</h5>
+        <li>Miasto: $zamowienie[miasto]</li>
+        <li>Adres: $zamowienie[adres]</li>
+        <li>Miasto: $zamowienie[miasto]</li>
+        <li>Kod pocztowy: $zamowienie[kod]</li>
+        <li>Imie: $zamowienie[imie]</li>
+        <li>Nazwisko: $zamowienie[nazwisko]</li>
+        <li>Numer telefonu: $zamowienie[numer]</li>
+        <li>Metoda platnosci: $zamowienie[metodaPlatnosci]</li>
+        <li>Metoda dostawy: $zamowienie[metodaDostawy]</li>
+        <li>E-mail: $zamowienie[email]</li>_____________________________________";
+    }
+    ?>
+
 </div>
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 <footer></footer>

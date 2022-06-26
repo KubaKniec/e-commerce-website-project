@@ -11,29 +11,43 @@ $zapytanie2 = "SELECT* FROM user WHERE id='$userId'";
 $selectNazwa = mysqli_query($connection, $zapytanie2);
 $nazwa = mysqli_fetch_assoc($selectNazwa);
 
+
 if (isset($_POST['submit'])) {
+    if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){  //validacja email
+        $name = mysqli_real_escape_string($connection, $_POST['name']);
+        $email = mysqli_real_escape_string($connection, $_POST['email']);
+        $pass = mysqli_real_escape_string($connection, md5($_POST['password']));
+        $confirmPass = mysqli_real_escape_string($connection, md5($_POST['confirmPass']));
 
-    $name = mysqli_real_escape_string($connection, $_POST['name']);
-    $email = mysqli_real_escape_string($connection, $_POST['email']);
-    $pass = mysqli_real_escape_string($connection, md5($_POST['password']));
-    $confirmPass = mysqli_real_escape_string($connection, md5($_POST['confirmPass']));
+        if ($pass === $confirmPass){
+            $select = mysqli_query($connection, "SELECT * FROM user WHERE email = '$email' AND haslo = '$pass'") or die('query failed');
 
-    $select = mysqli_query($connection, "SELECT * FROM user WHERE email = '$email' AND haslo = '$pass'") or die('query failed');
+            if (mysqli_num_rows($select) > 0) {
+                $message[] = 'user already exist!';
+            } else {
+                mysqli_query($connection, "INSERT INTO user(nazwa, email, haslo) VALUES('$name', '$email', '$pass')") or die('query failed');
+                $message[] = 'registered successfully!';
+                header('location:logowanie.php');
+            }
+        }
+        else{
+           echo '<script> alert("Pola HASLO oraz POTWIERDZ HASLO musza byc takie same. Wprowadz dane ponownie")</script>';
+        }
 
-    if (mysqli_num_rows($select) > 0) {
-        $message[] = 'user already exist!';
-    } else {
-        mysqli_query($connection, "INSERT INTO user(nazwa, email, haslo) VALUES('$name', '$email', '$pass')") or die('query failed');
-        $message[] = 'registered successfully!';
-        header('location:logowanie.php');
+    }
+    else{
+        echo '<script> alert("Email ma niepoprawny format. Wprowadz dane ponownie")</script>';
     }
 
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
+
     <link rel="stylesheet" href="css.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <title>
         👕 KOSZULKI PREMIUM 👕
@@ -43,10 +57,16 @@ if (isset($_POST['submit'])) {
         echo
         '<div class="loginInfo">
         <ul>';
-        echo 'Zalogowano jako:';
+        echo 'Zalogowano jako: ';
         echo $nazwa['nazwa'];
+        if($_SESSION['czyAdmin']==1){
+            echo '<br>Konto ma status ADMINA';
+        }
 
-        echo '<a href="logout.php"><br>wyloguj</a> 
+        echo '<a  href="logout.php"><br>
+                   <button class="btn btn-default">Wyloguj</button></a> 
+                   <a href="mojeKonto.php">
+                   <button class="btn btn-default">Moje konto</button></a>
         </ul>
     </div>';
     }
@@ -57,21 +77,16 @@ if (isset($_POST['submit'])) {
         <nav>
             <ul>
                 <a href="main_site.php">
-                    <button>Strona glowna</button></a>
+                    <button class="btn btn-default btn-sm">Strona glowna</button></a>
                 <a href="info_page.php">
-                    <button>O nas</button></a>
+                    <button class="btn btn-default btn-sm">O nas</button></a>
                 <a href="koszyk.php">
-                    <button>Koszyk</button></a>
+                    <button class="btn btn-default btn-sm">Koszyk</button></a>
                 <a href="logowanie.php">
-                    <button>Zaloguj</button></a>
+                    <button class="btn btn-default btn-sm">Zaloguj</button></a>
             </ul>
         </nav>
     </div>
-
-
-
-
-
 
 </head>
 <body class="body">
@@ -84,13 +99,12 @@ if(isset($message)){
     }
 }
 ?>
-
 <div class="rejestracja">
-
+    <!--formularz rejestracji-->
     <form action="" method="post">
         <h3>Rejestracja</h3>
         <input type="text" name="name" required placeholder="wpisz nazwe" class="box">
-        <input type="email" name="email" required placeholder="wpisz email" class="box">
+        <input type="text" name="email" required placeholder="wpisz email" class="box">
         <input type="password" name="password" required placeholder="wpisz haslo" class="box">
         <input type="password" name="confirmPass" required placeholder="potwierdz haslo" class="box">
         <input type="submit" name="submit" class="btn" value="zarejestruj">
@@ -99,11 +113,10 @@ if(isset($message)){
 
 </div>
 
-</body>
-</html>
 
 
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 <footer></footer>
 </html>

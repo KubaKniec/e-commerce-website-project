@@ -18,10 +18,14 @@ if(isset($_POST['submit'])){
     $select = mysqli_query($connection, "SELECT * FROM user WHERE email = '$email' AND haslo = '$pass'") or die('query failed');
 
     if(mysqli_num_rows($select) > 0){
+        $_SESSION['email'] = $_POST['email'];
         $row = mysqli_fetch_assoc($select);
         $_SESSION['user_id'] = $row['id'];
+        $_SESSION['czyAdmin'] = $row['czyAdmin'];
+
         header('location:main_site.php');
-    }else{
+    }
+    else{
         $message[] = 'zly email lub haslo!';
     }
 }
@@ -30,7 +34,9 @@ if(isset($_POST['submit'])){
 <!DOCTYPE html>
 <html>
 <head>
+
     <link rel="stylesheet" href="css.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <title>
         👕 KOSZULKI PREMIUM 👕
@@ -40,10 +46,16 @@ if(isset($_POST['submit'])){
         echo
         '<div class="loginInfo">
         <ul>';
-        echo 'Zalogowano jako:';
+        echo 'Zalogowano jako: ';
         echo $nazwa['nazwa'];
+        if($_SESSION['czyAdmin']==1){
+            echo '<br>Konto ma status ADMINA';
+        }
 
-        echo '<a href="logout.php"><br>wyloguj</a> 
+        echo '<a  href="logout.php"><br>
+                   <button class="btn btn-default">Wyloguj</button></a> 
+                   <a href="mojeKonto.php">
+                   <button class="btn btn-default">Moje konto</button></a>
         </ul>
     </div>';
     }
@@ -55,13 +67,13 @@ if(isset($_POST['submit'])){
         <nav>
             <ul>
                 <a href="main_site.php">
-                    <button>Strona glowna</button></a>
+                    <button class="btn btn-default btn-sm">Strona glowna</button></a>
                 <a href="info_page.php">
-                    <button>O nas</button></a>
+                    <button class="btn btn-default btn-sm">O nas</button></a>
                 <a href="koszyk.php">
-                    <button>Koszyk</button></a>
+                    <button class="btn btn-default btn-sm">Koszyk</button></a>
                 <a href="logowanie.php">
-                    <button>Zaloguj</button></a>
+                    <button class="btn btn-default btn-sm">Zaloguj</button></a>
             </ul>
         </nav>
     </div>
@@ -88,7 +100,7 @@ if(isset($_POST['submit'])){
 
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 <footer></footer>
 </html>
